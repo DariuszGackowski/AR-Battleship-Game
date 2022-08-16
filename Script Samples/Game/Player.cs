@@ -15,18 +15,18 @@ public class Player : MonoBehaviourPun
 
     private void Start()
     {
-        this.photonView.RPC("SyncValues", RpcTarget.AllBuffered, playerID, playerName, credits, typeOfDeck);
+        this.photonView.RPC("SyncPlayerValues", RpcTarget.AllBuffered, playerID, playerName, credits, typeOfDeck);
     }
     private void Update()
     {
         if (!setPlayer)
         {
-            GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().playerList.Add(this.gameObject);
+            GameManager.instance.playerList.Add(this.gameObject);
             setPlayer = !setPlayer;
         }
     }
     [PunRPC]
-    public void SyncValues(int playerID, string playerName, int credits, GameManager.TypeOfDeck typeOfDeck)
+    public void SyncPlayerValues(int playerID, string playerName, int credits, GameManager.TypeOfDeck typeOfDeck)
     {
         this.playerID = playerID;
         this.gameObject.name = this.playerName = playerName;

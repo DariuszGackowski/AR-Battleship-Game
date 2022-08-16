@@ -5,25 +5,24 @@ using UnityEngine.SceneManagement;
 
 public class CloseButton : MonoBehaviourPun
 {
-    public void ExitRoom() 
-    { 
+    [SerializeField] private GameObject mainCanvas;
+
+    public void ExitRoom()
+    {
         this.photonView.RPC("SetWin", RpcTarget.Others);
 
         StartCoroutine(WaitSecondsClose(0.5f));
     }
 
     [PunRPC]
-    public void SetWin() 
+    public void SetWin()
     {
-        GameObject mainCanvas = GameObject.FindGameObjectWithTag("MainCanvas");
-
         mainCanvas.transform.GetChild(0).gameObject.SetActive(false); //  UpPanel
 
         mainCanvas.transform.GetChild(2).gameObject.SetActive(false); // Next button
 
         if (!mainCanvas.transform.GetChild(5).gameObject.activeSelf && !mainCanvas.transform.GetChild(6).gameObject.activeSelf) // sprawdzenie czy panele zwyciestwa nie s¹ w³¹czone
         {
-            Debug.Log(mainCanvas.transform.GetChild(5).gameObject.activeSelf + "/// " + mainCanvas.transform.GetChild(6).gameObject.activeSelf);
             mainCanvas.transform.GetChild(4).gameObject.SetActive(true); // closePanel
         }
     }
@@ -36,7 +35,7 @@ public class CloseButton : MonoBehaviourPun
 
         PhotonNetwork.Disconnect();
 
-        while (PhotonNetwork.InRoom && PhotonNetwork.IsConnected) // dopóki jest w menu zwracaj nulla, po wyjœciu dopiero wczytaj scene
+        while (PhotonNetwork.InRoom && PhotonNetwork.IsConnected) // dopóki jest w pokoju zwracaj nulla 
         {
             yield return null;
         }

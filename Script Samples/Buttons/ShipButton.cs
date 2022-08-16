@@ -4,15 +4,15 @@ using UnityEngine.EventSystems;
 using System;
 public class ShipButton : MonoBehaviourPun
 {
+    [SerializeField] private EventSystem eventSystem;
+
     [NonSerialized] public bool isSelected;
 
     private GameManager gameManager;
-    private EventSystem eventSystem;
 
-    private void Awake()
+    private void Start()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        eventSystem = GameObject.FindGameObjectWithTag("EventSystem").GetComponent<EventSystem>();
+        gameManager = GameManager.instance;
     }
 
     public void ButtonClick()
@@ -22,13 +22,13 @@ public class ShipButton : MonoBehaviourPun
 
         if (gameCard.used) // zwracam kiedy obiekt jest u¿yty
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true);// znak zakazu aktywuje
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true);// znak zakazu aktywuje
             return;
         }
 
         if (gameManager.attackerID.Equals(0) && gameCard.typeOfShip.Equals(GameManager.TypeOfShips.CargoShip)) // jeœli wybieramy frachtowiec
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true);
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true);
 
             GameManager.DeactivateButtons();
 
@@ -37,18 +37,18 @@ public class ShipButton : MonoBehaviourPun
 
         if (gameManager.attackerID.Equals(0) && !gameCard.deck.Equals(gameManager.typeOfDeck)) // blokuje u¿ycie nie swojej karty
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true);// znak zakazu aktywuje
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true);// znak zakazu aktywuje
             return;
         }
 
         if (gameManager.attackerID.Equals(0) && !GameManager.CheckCredits(card)) //CheckCredits sprawdza czy staæ gracza na ruch swoj¹ kart¹ ||| blokuje u¿ycie karty gracza, który jest bez pieniêdzy
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true);// znak zakazu aktywuje
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true);// znak zakazu aktywuje
             return;
         }
         if (!gameManager.attackerID.Equals(0) && !gameCard.inRange || !gameManager.attackerID.Equals(0) && !gameCard.id.Equals(gameManager.attackerID) && gameCard.deck.Equals(GameManager.FindGameCardInScene(gameManager.attackerID, "ID").GetComponent<GameCard>().deck)) /// blokuje jeœli obroñca jest tej samej tali co atakuj¹cy)
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true); // znak zakazu aktywuje
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true); // znak zakazu aktywuje
 
             GameManager.DeactivateButtons();
 

@@ -2,11 +2,11 @@ using UnityEngine;
 public class GameCard : MonoBehaviour
 {
     [Header("Card Informations")]
-    [Space] public bool inRange;
+    public bool inRange;
     public bool used;
 
     [Header("Card Types")]
-    [Space] public int id;
+    public int id;
     public GameManager.TypeOfDeck deck;
     public string cardName;
     public GameManager.TypeOfShips typeOfShip;
@@ -21,11 +21,11 @@ public class GameCard : MonoBehaviour
     public int damage;
     public int cardPosition;
 
-    private void Awake()
+    private void Start()
     {
-        cardName = gameObject.name.ToString();
+        cardName = cardName.ToString();
 
-        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().gameCardList.Add(this.gameObject);
+        GameManager.instance.gameCardList.Add(this.gameObject);
 
         GameManager.UpdateCardText(this.gameObject);
     }

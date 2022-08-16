@@ -4,14 +4,9 @@ using UnityEngine.EventSystems;
 
 public class BoardButton : MonoBehaviour
 {
+    [SerializeField] private EventSystem eventSystem;
+
     [NonSerialized] public bool isSelected;
-
-    private EventSystem eventSystem;
-
-    public void Awake()
-    {
-        eventSystem = GameObject.FindGameObjectWithTag("EventSystem").GetComponent<EventSystem>();
-    }
 
     public void ButtonClick()
     {

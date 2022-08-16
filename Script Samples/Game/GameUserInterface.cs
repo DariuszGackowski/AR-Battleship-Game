@@ -7,7 +7,7 @@ public class GameUserInterface : MonoBehaviourPun
 {
     [SerializeField] private GameObject playerInfo1, playerInfo2, creditsInfo1, creditsInfo2, waitingInfo, next, groupInfo1, groupInfo2, groupInfo3,upPanel;
 
-    [NonSerialized] public GameObject roundInfo, initiativeInfo;
+    [SerializeField] public GameObject roundInfo, initiativeInfo;
 
     [NonSerialized] public bool startUI;
 
@@ -15,9 +15,9 @@ public class GameUserInterface : MonoBehaviourPun
 
     [NonSerialized] public GameManager gameManager;
 
-    private void Awake()
+    private void Start()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        gameManager = GameManager.instance;
     }
     private void Update()
     {

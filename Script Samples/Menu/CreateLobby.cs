@@ -20,10 +20,8 @@ public class CreateLobby : MonoBehaviourPunCallbacks, IMatchmakingCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-        PhotonNetwork.LoadLevel("Game");
+        PhotonNetwork.LoadLevel("GameScene");
     }
-
-
 
     private IEnumerator WaitSecondsCreateRoom(float timeInSeconds)
     {

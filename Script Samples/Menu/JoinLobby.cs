@@ -21,7 +21,7 @@ public class JoinLobby : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-        PhotonNetwork.LoadLevel("Game");
+        PhotonNetwork.LoadLevel("GameScene");
     }
 
     private IEnumerator WaitSecondsJoinRoom(float timeInSeconds)

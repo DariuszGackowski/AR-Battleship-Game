@@ -7,7 +7,7 @@ public class CardsDetector : MonoBehaviour
     private GameManager gameManager;
     private void Awake()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        gameManager = GameManager.instance;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -26,7 +26,7 @@ public class CardsDetector : MonoBehaviour
 
         if (!GameManager.FindNetworkPlayer(cardCard.deck, "Deck").GetComponent<Player>().playerID.Equals(gameManager.initiative)) // jeœli karta jest innego gracza
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true); // uaktywnienie znaku zakazu
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true); // uaktywnienie znaku zakazu
             return;
         }
 

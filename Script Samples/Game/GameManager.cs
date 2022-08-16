@@ -8,25 +8,26 @@ using System.Collections;
 [RequireComponent(typeof(PhotonView))]
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public static GameManager gameManager;
+    public static GameManager instance;
 
-    [NonSerialized] public List<GameObject> cardsInRange, playerList, gameCardList;
-
-    [NonSerialized] public List<int> availabelPositions;
+    [NonSerialized] public List<GameObject> cardsInRange = new List<GameObject>();
+    [NonSerialized] public List<GameObject> playerList = new List<GameObject>();
+    [NonSerialized] public List<GameObject> gameCardList = new List<GameObject>();
+    [NonSerialized] public List<int> availabelPositions = new List<int>();
 
     [NonSerialized] public GameObject[] networkPlayers;
 
     [SerializeField] private GameObject playerPrefab;
 
-    public static readonly int[] startCredits = new int[] { 0, 1, 3, 5, 7, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+    public static readonly int[] startCredits = new int[] { 0, 1, 3, 5, 7, 9, 10 };
 
     [Header ("Game Informations")]
     [Space] public TypeOfDeck typeOfDeck;
     public int attackerID, defenderID, playerInitiativeNumber, round, initiative;
 
     public enum TypeOfWeapons { Laser, Rackets, Kinetic, None };
-    public enum TypeOfShips { Corvette, Destroyer, Cruiser, CargoShip };
-    public enum TypeOfDeck { Vuforians, BlackSuns };
+    public enum TypeOfShips { Fighter, CargoShip };
+    public enum TypeOfDeck { Vuforians, RedSuns };
 
     [NonSerialized] public bool playersAreSet;
 
@@ -52,7 +53,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        gameManager = GetComponent<GameManager>();
+        instance = this;
 
         Application.targetFrameRate = 60;
 
@@ -66,7 +67,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void Start() => StartGame(ChoiceContainer.decision);
 
     private void Update() => SetNetworkPlayers();
-    //[ContextMenu("SetNetworkPlayers")] dziêki temu w edytorze mo¿na odpalaæ metode
     private void SetNetworkPlayers()
     {
         if (!playersAreSet && playerList.Count.Equals(2))
@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject.SetActive(true); /// uaktywnienie znaku zakazu
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(6).gameObject.SetActive(true); /// uaktywnienie znaku zakazu
         }
     }
     public void ActivateSceneObject(GameObject card)
@@ -171,15 +171,17 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         foreach (GameObject card in cards)
         {
-            GameObject button = card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(1).gameObject;
+            GameObject button1 = card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject;
+            GameObject button2 = card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(3).gameObject;
 
-            ShipButton.ClearColor(button);//czyszczenie kolorów buttonów\
+            ShipButton.ClearColor(button1);//czyszczenie kolorów buttonów\
+            ShipButton.ClearColor(button2);//czyszczenie kolorów buttonów\
         }
     }
     public static bool CheckCredits(GameObject card) => card.GetComponent<GameCard>().deck switch
     {
         GameManager.TypeOfDeck.Vuforians => FindNetworkPlayer(GameManager.TypeOfDeck.Vuforians, "Deck").GetComponent<Player>().credits >= card.GetComponent<GameCard>().movingCost,
-        GameManager.TypeOfDeck.BlackSuns => FindNetworkPlayer(GameManager.TypeOfDeck.BlackSuns, "Deck").GetComponent<Player>().credits >= card.GetComponent<GameCard>().movingCost,
+        GameManager.TypeOfDeck.RedSuns => FindNetworkPlayer(GameManager.TypeOfDeck.RedSuns, "Deck").GetComponent<Player>().credits >= card.GetComponent<GameCard>().movingCost,
         _ => throw new ArgumentOutOfRangeException()
     };
     private void SetAttacker(GameObject attacker)
@@ -194,7 +196,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            gameManager.UnsetInRange();
+            instance.UnsetInRange();
 
             photonView.RPC("SyncAttacker", RpcTarget.All, 0);
         }
@@ -247,7 +249,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 {
                     gameCard.inRange = true;
 
-                    gameManager.cardsInRange.Add(card);
+                    instance.cardsInRange.Add(card);
                 }
             }
         }
@@ -286,7 +288,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public void UnsetInRange()
     {
-        foreach (GameObject card in gameManager.cardsInRange)
+        foreach (GameObject card in instance.cardsInRange)
         {
             card.GetComponent<GameCard>().inRange = false;
         }
@@ -513,9 +515,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         UnsetInRange();
 
-
-
-
         gameCardList.Remove(defender);
         gameCardList.Remove(attacker);
         
@@ -561,13 +560,13 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (gameCard.deck.Equals(GameManager.TypeOfDeck.BlackSuns))
+        if (gameCard.deck.Equals(GameManager.TypeOfDeck.RedSuns))
         {
             photonView.RPC("SetWinner", RpcTarget.All, 6); // obiekt WinVuforians
         }
         else
         {
-            photonView.RPC("SetWinner", RpcTarget.All, 5); // obiekt WinBlackSuns
+            photonView.RPC("SetWinner", RpcTarget.All, 5); // obiekt WinRedSuns
         }
     }
     [PunRPC]
@@ -607,8 +606,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public static void UpdateCardText(GameObject card)
     {
+        //panel 1
         for (int i = 0; i < card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.childCount; i++)
             card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = SetText(i, card);
+        //panel 2
+        for (int i = 0; i < card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(1).transform.childCount; i++)
+            card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(1).transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = SetText(i, card);
     }
     private static string SetText(int i, GameObject card) => i switch
     {
@@ -623,7 +626,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     };
     public static GameObject FindNetworkPlayer(dynamic condition, string field)
     {
-        GameObject matchPlayer = Array.Find(gameManager.networkPlayers, player => field switch
+        GameObject matchPlayer = Array.Find(instance.networkPlayers, player => field switch
         {
             "PlayerID" => player.GetComponent<Player>().playerID.Equals(condition),
             "Deck" => player.GetComponent<Player>().typeOfDeck.Equals(condition),
@@ -734,7 +737,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         SetUnchecked();
 
-        gameManager.attackerID = gameManager.defenderID = 0;
+        instance.attackerID = instance.defenderID = 0;
     }
     #endregion
 }

@@ -5,15 +5,14 @@ using UnityEngine.EventSystems;
 
 public class NextButton : MonoBehaviour
 {
-    private GameManager gameManager;
     private GameUserInterface gameUserInterface;
+    private GameManager gameManager;
     private PhotonView photonView;
 
     private void Awake()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        gameUserInterface = GameObject.FindGameObjectWithTag("UI").GetComponent<GameUserInterface>();
-
+        gameManager = GameManager.instance;
+        gameUserInterface = this.gameObject.GetComponent<GameUserInterface>();
         photonView = GetComponent<PhotonView>();
     }
     public void Next()
@@ -42,7 +41,14 @@ public class NextButton : MonoBehaviour
         foreach (GameObject player in gameManager.playerList)
         {
             Player playerScript = player.GetComponent<Player>();
-            playerScript.credits += GameManager.startCredits[round];
+            if (round >= 6)
+            {
+                playerScript.credits += 10;
+            }
+            else
+            {
+                playerScript.credits += GameManager.startCredits[round];
+            }
         }
     }
 
@@ -88,7 +94,7 @@ public class NextButton : MonoBehaviour
 
         foreach (GameObject card in cards)
         {
-            GameObject button = card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(1).gameObject;
+            GameObject button = card.transform.GetChild(0).transform.GetChild(1).transform.GetChild(2).gameObject;
 
             ShipButton.ClearColor(button);//czyszczenie kolorów buttonów
         }

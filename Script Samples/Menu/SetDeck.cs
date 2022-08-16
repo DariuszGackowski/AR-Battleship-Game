@@ -6,7 +6,7 @@ public class SetDeck : MonoBehaviour
 {
     public void BlackSuns()
     {
-        PlayerPrefs.SetString("TypeOfDeck", GameManager.TypeOfDeck.BlackSuns.ToString());
+        PlayerPrefs.SetString("TypeOfDeck", GameManager.TypeOfDeck.RedSuns.ToString());
 
         StartCoroutine(WaitSecondsLoading(0.5f));
     }
